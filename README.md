@@ -1,2 +1,2 @@
 # FreshmanProjects
-this is all my note worthy project from freshman year.
+All my note worthy project from freshman year.
