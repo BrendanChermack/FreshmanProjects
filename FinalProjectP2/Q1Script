@@ -1,0 +1,181 @@
+Script started on Sun 16 Apr 2023 11:08:32 AM CDT
+cat hg  gra	]0;it1032ao@csci4:~/FinalProject[?1034h[it1032ao@csci4 FinalProject]$ cat grades.cpp 
+// A payroll template C++ program  
+  
+#include <iostream>  
+#include <fstream>  
+#include <cstring>  
+#include <iomanip>  
+using namespace std;  
+  
+  
+
+  
+/*------------------------------------------------------------------------  
+  Functions used by main program and the user interface  
+  ------------------------------------------------------------------------*/  
+  
+
+  
+void showmenu()  
+{  
+  cout<< "Please type in  one of the following options: \n";  
+  cout<< "A or a to Load a data file containing information about the students and the scores \n";  
+  cout<< "B or b to Display the stored data(raw data) \n";  
+  cout<< "C or c to Process the records currently loaded\n";  
+  cout<< "D or d to Search for a particular student, specified by name or ID \n";  
+  cout<< "E or e to Print the processed grades to a file \n";  
+  cout<< "F or f to Add a student to the classlist \n";  
+  cout<< "G or g to Change a student’s test scores \n";  
+  cout<< "H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) \n";    
+}  
+  
+void loadStudent()  
+{  
+   cout << "Loading students \n";
+}  
+  
+void displayData()
+{
+ cout << "Displaying data \n";
+}
+
+void processRecords()  
+{  
+  cout << "Processing Records \n";
+
+}  
+  
+  
+void searchStudent()  
+{  
+  
+  cout << "Searching for student\n";  
+}  
+  
+void printToDataFile()  
+{  
+  cout << "Printing student data to a file \n";  
+}  
+  
+  
+void addStudentToList()  
+{  
+  cout << "Adding a student to the classlist \n";      
+}  
+  
+void changeTestScore()  
+{  
+  cout << "Changing students test score\n";
+}  
+  
+void saveInfo()  
+{  
+  cout << "Saving data";  
+}  
+  
+  
+/* ---------------------- start of Main Program -----------------------------*/  
+  
+  
+int main()  
+{  
+  
+  char choice;  
+  
+  showmenu();  
+  cout << "Please indicate your choice of operation (m for menu): ";  
+  cin >> choice;  
+  
+  while ((choice != 'h')&& (choice != 'H')){  
+        switch(choice){  
+            case 'a':  
+            case 'A': loadStudent(); break;  
+            case 'b':
+            case 'B': displayData(); break;
+            case 'c':  
+            case 'C': processRecords();break;  
+            case 'd':  
+            case 'D': searchStudent();break;  
+            case 'e':  
+            case 'E': printToDataFile();break;  
+            case 'f':  
+            case 'F': addStudentToList();break;  
+            case 'g':  
+            case 'G': changeTestScore();break;  
+            case 'm':
+            case 'M': showmenu();break;
+            default : cout << "Not a valid choice" << endl;  
+        }  
+      cin.ignore(200, '\n'); cin.clear(); //clear out all input  
+      cout << "Please indicate your choice of operation (m for menu): ";  
+      cin >> choice;  
+    }  
+  saveInfo();  
+  cout << " Thank-you, good bye! \n";  
+}  
+  ]0;it1032ao@csci4:~/FinalProject[it1032ao@csci4 FinalProject]$ cat grades.cpp script Hwork10Q2Script./a.out[Kg++ main.cpp fraction.o fractionList.o[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C./a.out[Kscript Hwork10Q2Script[7Pcat grades.cpp [Kg++ grades.cpp 
+^[[A^[[A]0;it1032ao@csci4:~/FinalProject[it1032ao@csci4 FinalProject]$ g++ grades.cpp cat[C[C[C[C[C[C[C[C[C[C[C[Cscript Hwork10Q2Script./a.out[K
+Please type in  one of the following options: 
+A or a to Load a data file containing information about the students and the scores 
+B or b to Display the stored data(raw data) 
+C or c to Process the records currently loaded
+D or d to Search for a particular student, specified by name or ID 
+E or e to Print the processed grades to a file 
+F or f to Add a student to the classlist 
+G or g to Change a student’s test scores 
+H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) 
+Please indicate your choice of operation (m for menu): A
+Loading students 
+Please indicate your choice of operation (m for menu): a
+Loading students 
+Please indicate your choice of operation (m for menu): B
+Displaying data 
+Please indicate your choice of operation (m for menu): b
+Displaying data 
+Please indicate your choice of operation (m for menu): C
+Processing Records 
+Please indicate your choice of operation (m for menu): c
+Processing Records 
+Please indicate your choice of operation (m for menu): D
+Searching for student
+Please indicate your choice of operation (m for menu): d
+Searching for student
+Please indicate your choice of operation (m for menu): E
+Printing student data to a file 
+Please indicate your choice of operation (m for menu): e
+Printing student data to a file 
+Please indicate your choice of operation (m for menu): F
+Adding a student to the classlist 
+Please indicate your choice of operation (m for menu): f
+Adding a student to the classlist 
+Please indicate your choice of operation (m for menu): g
+Changing students test score
+Please indicate your choice of operation (m for menu): G
+Changing students test score
+Please indicate your choice of operation (m for menu): m
+Please type in  one of the following options: 
+A or a to Load a data file containing information about the students and the scores 
+B or b to Display the stored data(raw data) 
+C or c to Process the records currently loaded
+D or d to Search for a particular student, specified by name or ID 
+E or e to Print the processed grades to a file 
+F or f to Add a student to the classlist 
+G or g to Change a student’s test scores 
+H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) 
+Please indicate your choice of operation (m for menu): M
+Please type in  one of the following options: 
+A or a to Load a data file containing information about the students and the scores 
+B or b to Display the stored data(raw data) 
+C or c to Process the records currently loaded
+D or d to Search for a particular student, specified by name or ID 
+E or e to Print the processed grades to a file 
+F or f to Add a student to the classlist 
+G or g to Change a student’s test scores 
+H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) 
+Please indicate your choice of operation (m for menu): H
+Saving data Thank-you, good bye! 
+]0;it1032ao@csci4:~/FinalProject[it1032ao@csci4 FinalProject]$ exit
+exit
+
+Script done on Sun 16 Apr 2023 11:09:30 AM CDT

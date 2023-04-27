@@ -1,0 +1,590 @@
+Script started on Wed 26 Apr 2023 04:58:24 PM CDT
+cat grad]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[?1034h[it1032ao@csci4 FinalProjectP2]$ cat grades.cpp
+#include <iostream>  
+#include <fstream>  
+#include <cstring> 
+#include <string> 
+#include <iomanip>  
+#include "classListH.h"
+using namespace std;  
+  
+const int maxSize = 20; //at most 20 students 
+const int nameLength = student::nameLength; 
+
+classList stuList(5);
+ofstream outfile;  
+ifstream infile;    
+char input_file_name[21], output_file_name[21], name[nameLength+1]; 
+string id;
+/*------------------------------------------------------------------------  
+  Functions used by main program and the user interface  
+  ------------------------------------------------------------------------*/  
+//menu function
+void showmenu(){  
+  cout<< "Please type in  one of the following options: \n";  
+  cout<< "A or a to Load a data file containing information about the students and the scores \n";  
+  cout<< "B or b to Display the stored data(raw data) \n";  
+  cout<< "C or c to Process the records currently loaded\n";  
+  cout<< "D or d to Search for a particular student, specified by name or ID \n";  
+  cout<< "E or e to Print the processed grades to a file \n";  
+  cout<< "F or f to Add a student to the classlist \n";  
+  cout<< "G or g to Change a student’s test scores \n";  
+  cout<< "H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) \n";    
+}  
+//loads students data from an inputfile
+void loadStudent(){  
+    student sTemp; 
+    float hworkScores[10];
+    float participation, testScore1, testScore2, testScore3, testScoreF;
+    bool exit;
+    int size;
+    cout << "Enter name of the data file:  ";  
+    cin >> input_file_name;  
+    infile.open(input_file_name);  
+    if (!infile){  
+        // abandons operation with error mesg  
+        cout << "Could not open input file \n";  
+        infile.close();  
+        infile.clear();  
+        return;  
+    }
+    infile >> name; 
+    sTemp.setName(name);
+    while(!infile.eof()){
+        infile >> id;
+        sTemp.setId(id);
+        size = 0;
+        for(int i = 0; i <= 9; i++){
+           infile >> hworkScores[i];
+           size++;
+        }
+        sTemp.setHworkScores(hworkScores, size);
+        infile >> participation; 
+        sTemp.setParticipation(participation);
+        infile >> testScore1;
+        sTemp.setTestScore1(testScore1);
+        infile >> testScore2;
+        sTemp.setTestScore2(testScore2);
+        infile >> testScore3;
+        sTemp.setTestScore3(testScore3);
+        infile >> testScoreF;
+        sTemp.setTestScoreF(testScoreF);
+        stuList.addStudent(sTemp);
+        infile >> name;
+        sTemp.setName(name);
+        }
+    infile.close();  
+    infile.clear(); 
+    }  
+//displays the students data
+void displayData(){
+    cout << "Displaying data \n";
+    stuList.writeData(cout);
+}
+//calculates the grades and aggregated scores
+void processRecords(){  
+  cout << "Processing Records \n";
+  stuList.processStudent();
+}  
+//searches for a specific student in the class list and displays there data
+void searchStudent(){  
+  char c; 
+  int j;
+  cout << "Please enter n/N to search by name and anything else will seach by id\n";
+  cin >> c;
+  if((c == 'n') || (c == 'N')){
+    cout << "Please enter the name of the student\n";
+    cin >> name;
+    j = stuList.searchByName(name);
+  }
+  else{
+    cout << "Enter the ID of the student\n";
+    cin >> id;
+    j = stuList.searchById(id);
+  }
+  
+  if(j != -1){
+    stuList.getStudent(j).writeStudentReport(cout);
+  }
+  else{
+    cout << "student could not be found\n";
+  }
+}  
+//prints student data the console
+void printToDataFile(){  
+  cout << "Printing student data to a file \n"; 
+  stuList.printStudent(cout);
+}  
+//adds a student to the class
+void addStudentToList(){
+    student sTemp; 
+    float homeWorkScores[10];
+    float participation;
+    float test1, test2, test3, testF;
+    int i = 0;
+    cout << "Adding student \n"; 
+    cout << "Using this format (Name ID 10HomeworkScores ParticipationScore 3TestScores FinalScore) Enter the student data \n";
+    //read the student name
+    cin >> name; 
+    sTemp.setName(name);
+    
+    //read the students Id
+    cin >> id; 
+    sTemp.setId(id);
+
+    //Read 10 values to add to the homework scores
+    while(i <= 9){
+        cin >> homeWorkScores[i];
+        i++;
+    }
+    sTemp.setHworkScores(homeWorkScores, 10);
+    //sets new values to the scores
+    cin >> participation; 
+    sTemp.setParticipation(participation);
+    cin >> test1; 
+    sTemp.setTestScore1(test1);
+
+    cin >> test2; 
+    sTemp.setTestScore2(test2);
+
+    cin >> test3; 
+    sTemp.setTestScore3(test3);
+
+    cin >> testF; 
+    sTemp.setTestScoreF(testF);
+    
+    //add the temp student to the list
+    bool success = stuList.addStudent(sTemp);
+    
+    if(success){
+        cout << "Student Added to class list. \n";
+    }
+    else{
+        cout << "Failed to Add, class list is Full. \n";
+    }  
+}  
+//set the final score and reprocesses the data
+void changeTestScore(){  
+  int j;
+  cout << "Enter the ID of the student\n";
+  cin >> id;
+  j = stuList.searchById(id);
+
+  if(j != -1){
+    cout << "Enter the new final test score\n";
+    int newScoreF;
+    cin >> newScoreF;
+    stuList.getStudent(j).modFinal(newScoreF);
+    stuList.processStudent();
+  }
+  else{
+    cout << "student could not be found\n";
+  }
+
+}
+//writes the processed data to an outfile of the users choice
+void saveInfo(){ 
+  cout << "Enter where you would like to save your data\n";
+  cin >> output_file_name;
+  outfile.open(output_file_name);
+  stuList.printStudent(outfile); 
+  cout << "Saving data";  
+  outfile.close();
+}  
+  
+  
+/* ---------------------- start of Main Program -----------------------------*/  
+  
+  
+int main(){  
+  
+  char choice;  
+  
+  showmenu();  
+  cout << "Please indicate your choice of operation (m for menu): ";  
+  cin >> choice;  
+  
+  while ((choice != 'h')&& (choice != 'H')){  
+        switch(choice){  
+            case 'a':  
+            case 'A': loadStudent(); break;  
+            case 'b':
+            case 'B': displayData(); break;
+            case 'c':  
+            case 'C': processRecords();break;  
+            case 'd':  
+            case 'D': searchStudent();break;  
+            case 'e':  
+            case 'E': printToDataFile();break;  
+            case 'f':  
+            case 'F': addStudentToList();break;  
+            case 'g':  
+            case 'G': changeTestScore();break;  
+            case 'm':
+            case 'M': showmenu();break;
+            default : cout << "Not a valid choice" << endl;  
+        }  
+      cin.ignore(200, '\n'); cin.clear(); //clear out all input  
+      cout << "Please indicate your choice of operation (m for menu): ";  
+      cin >> choice;  
+    }  
+  saveInfo();  
+  cout << " Thank-you, good bye! \n";  
+}  
+  ]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat studentH.h
+#include <iostream>  
+#include <fstream>  
+#include <cstring>  
+#include <string> 
+#include <iomanip>
+#ifndef studentH
+#define studentH
+using namespace std;
+
+class student{
+    //public varaibles
+    public:
+        const static int nameLength = 20;
+        const static int idLength = 8; 
+        const static int maxHworks = 10;
+    //private varaibles
+    private:
+        char name[nameLength];  // name is stored as an array of char 
+        string id;
+        int numHworks;
+        float hworkScores[maxHworks];
+        float participation, testScore1, testScore2, testScore3, testScoreF;
+        float agTest, agHwork, totalScore;
+        char grade;
+    //public methods
+    public:
+    //returns the student name
+        char* getName(){
+            return name;
+        }
+         //returns the student id
+        string getId(){
+            return id;
+        }
+        //sets the student name
+        void setName(char n[]){ // parameter is array of char, to match name
+            strcpy(name, n); // need this function; cannot assign arrays
+        }
+        //sets the student id
+        void setId(string n){
+            id = n;
+        }
+        //sets homeworkscores
+        void setHworkScores(float scores[], int size){
+            numHworks = (size <= maxHworks) ? size : maxHworks;
+            for(int i = 0; i < numHworks; i++){
+                hworkScores[i]  = scores[i];
+            }
+        }
+        //sets setParticipation
+        void setParticipation(int p){
+            participation = p;
+        }
+        //sets setTestScore1
+        void setTestScore1(int score1){
+            testScore1 = score1;
+        }
+        //sets setTestScore2
+        void setTestScore2(int score2){
+            testScore2 = score2;
+        }
+        //sets setTestScore3
+         void setTestScore3(int score3){
+            testScore3 = score3;
+        }
+        //sets setTestScoreF
+        void setTestScoreF(int scoreF){
+            
+            testScoreF = scoreF;
+        }
+        //displays students info
+        void displayStudent(ostream& outfile){
+            char space = ' ';
+            outfile << name << space << id << space;
+            for(int i = 0; i < maxHworks; i++){
+                outfile << hworkScores[i] << space;
+            }
+            outfile << participation << space << testScore1 << space 
+            << testScore2 << space << testScoreF;
+        }
+        //calculates total homework score
+        void hworkScoreCal(){
+			float tempScore, totalScore;
+			float min = 100, total = 0;
+			bool error = false;
+			
+			for (int i = 0; i < maxHworks; i++){
+				tempScore = hworkScores[i];
+				if((tempScore > 100) || (tempScore < 0)){
+					error = true;
+				}
+				if (tempScore < min){
+					min = tempScore;
+				}
+				totalScore += hworkScores[i];
+			}
+			
+			agHwork = (((totalScore - min) + participation)/1000)*50;
+			if(error){
+                agHwork = -1.0;
+            }
+		}
+        //calculates tests score
+        void testScoreCal(){
+			float midScores = testScore1 + testScore2 + testScore3;
+			float finalT = testScoreF*2;
+			
+            agTest = (((finalT + midScores)/500)*50);
+			if((((testScore1 > 100) || (testScore1 < 0)) || ((testScore2 > 100) || (testScore2 < 0))) || (((testScore3 > 100) || (testScore3 < 0)) || ((testScoreF > 100) || (testScoreF < 0)))){
+                agTest = -1;
+			}
+		}
+        //calculates total score
+        void totalScoreCal(){
+			totalScore = agTest + agHwork;
+			if((agHwork == -1) || (agTest == -1))
+			{
+				totalScore = -1;
+			}
+		}
+        //determines the letter grade
+        void letterGrade(){
+            //grading logic for which score recieves what grade
+            if(totalScore == -1)//if -1 then the letter z is returned
+            {
+                grade = 'Z';
+            }
+            else if(totalScore >= 90)
+            {
+                grade = 'A';
+            }
+            else if(totalScore >= 80)
+            {
+                grade = 'B';
+            }
+            else if(totalScore >= 70)
+            {
+                grade = 'C';
+            }
+            else if(totalScore >= 60) 
+            {
+                grade = 'D';
+            }
+            else
+            {
+                grade = 'F';
+            }
+		}
+        //calls all the calculations so the student is processed
+        void processStudent(){
+			int totalScore = 0;
+			hworkScoreCal();
+			testScoreCal();
+			totalScoreCal();
+			letterGrade();
+		}
+        //outputs the students data
+        void writeStudentReport(ostream& outfile){
+		  char space = ' ';
+		  outfile << name << space << id << space << agHwork << space << agTest << space << totalScore << space << grade << endl; 	  
+		}
+        //allows to adjust the final score
+        void modFinal(int newFinalScore){
+            int newScoreF = newFinalScore;
+            setTestScoreF(newScoreF);
+        }
+};
+#endif]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat studentH.h[1P.h[C[1Ph[C[K.cpp
+]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat student.cpp[1P.cpp[1P.cpp[1P.cpp[1P.cpp[1P.cpp[1P.cpp[1P.cppc.cppl.cppa.cpps.cpps.cppL.cppi.cpps.cppt.cpp
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <iomanip>
+#include "studentH.h"
+#include "classListH.h"
+#include <vector>
+using namespace std;
+/*------------------------------------------------------------------------
+Functions for handling and processing the list of students
+-------------------------------------------------------------------------*/
+//adds a student to the vector
+bool classList::addStudent(student stu){  
+  //cout << maxSize << endl;
+    if((stuList.size()) >= maxSize)
+        return false;  
+        stuList.push_back(stu);
+        return true;  
+}  
+//displays all the students data from the student vector
+void classList::writeData(ostream& outfile){
+  for(unsigned int index = 0; index < stuList.size(); index++){       
+      (stuList.at(index)).displayStudent(outfile);
+       outfile << endl;
+    }
+}
+//processes all the students
+void classList::processStudent(){
+    for(unsigned int i = 0; i < stuList.size(); i++)
+    {
+        (stuList.at(i)).processStudent();
+        
+    }
+}
+//prints all the students data
+void classList::printStudent(ostream& outfile){
+    for(unsigned int i = 0; i < stuList.size(); i++){
+        (stuList.at(i)).writeStudentReport(outfile);
+        outfile << endl;
+    }
+}
+//returns a studetn at index i
+student& classList::getStudent(int i){
+  return stuList.at(i);
+}
+//searches a specific student with a specific ID and returns the idex
+int classList::searchById(string Id){
+  for(unsigned int i = 0; i < stuList.size(); i++){
+    if(stuList.at(i).getId() == Id){
+      return i;
+    }
+  }
+  return -1;
+}
+//searches for specific student with a specific name and returns the idex
+int classList::searchByName(char name[]){
+  for(unsigned int i = 0; i < stuList.size(); i++){
+    if(strcmp(stuList.at(i).getName(), name) == 0){
+      return i;
+    }
+  }
+  return -1;
+}]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat classList.cppH.cpp[C[C[C[C[K[K[Kh
+#include <fstream>
+using namespace std;
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <iomanip>
+#include "studentH.h"
+#ifndef classlistH
+#define classlistH
+
+class classList{
+    private:
+        unsigned int maxSize; 
+        int nameLength, idLength; 
+        vector<student> stuList;
+    public:
+    //constructor
+    classList(unsigned int size = 0){
+        maxSize = size;
+        nameLength = student::nameLength;
+    }
+    //methods
+    bool addStudent(student ); 
+    void writeData(ostream& outfile);
+    void processStudent();
+    void printStudent(ostream& outfile);
+    student& getStudent(int i);
+    int searchById(string id);
+    int searchByName(char name[]);
+};
+#endif
+]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat classListH.h.cpp[2Pstudent.cpp[1PH.hgrades.cppexit[Ksftp sftp.stcloudstate.edu[1Pdu[16Pcript Q6[2P./a.out
+Please type in  one of the following options: 
+A or a to Load a data file containing information about the students and the scores 
+B or b to Display the stored data(raw data) 
+C or c to Process the records currently loaded
+D or d to Search for a particular student, specified by name or ID 
+E or e to Print the processed grades to a file 
+F or f to Add a student to the classlist 
+G or g to Change a student’s test scores 
+H or h to Exit and save the (modified) raw data(name, id, test scores and homework scores) 
+Please indicate your choice of operation (m for menu): a
+Enter name of the data file:  data2
+Please indicate your choice of operation (m for menu): b
+Displaying data 
+Pondicherry,John XPQ23456 11 22 33 44 55 66 77 88 99 100 91 92 93 95
+Quincy,Jane XPL27856 82 58 76 40 74 49 88 84 89 83 90 79 75 73
+Jones,Nick XPQ23466 11 22 33 44 55 66 77 84 89 83 90 79 75 73
+Please indicate your choice of operation (m for menu): c
+Processing Records 
+Please indicate your choice of operation (m for menu): d
+Please enter n/N to search by name and anything else will seach by id
+i
+Enter the ID of the student
+XPQ23466
+Jones,Nick XPQ23466 32.15 38.1 70.25 C
+Please indicate your choice of operation (m for menu): e
+Printing student data to a file 
+Pondicherry,John XPQ23456 33.75 46.9 80.65 B
+
+Quincy,Jane XPL27856 38.65 38.1 76.75 C
+
+Jones,Nick XPQ23466 32.15 38.1 70.25 C
+
+Please indicate your choice of operation (m for menu): f
+Adding student 
+Using this format (Name ID 10HomeworkScores ParticipationScore 3TestScores FinalScore) Enter the student data 
+b Billy,Joel bilJoe   joe 1 2 3 4 4 5 6 7 8 9 10 11 12 13 14 15  
+Student Added to class list. 
+Please indicate your choice of operation (m for menu): f
+Adding student 
+Using this format (Name ID 10HomeworkScores ParticipationScore 3TestScores FinalScore) Enter the student data 
+o Over,Achieve Oa a  oach 100 100 1001  100 1001    1001    100 100 100 100 100 100 100 100 100
+Student Added to class list. 
+Please indicate your choice of operation (m for menu): c
+Processing Records 
+Please indicate your choice of operation (m for menu): e
+Printing student data to a file 
+Pondicherry,John XPQ23456 33.75 46.9 80.65 B
+
+Quincy,Jane XPL27856 38.65 38.1 76.75 C
+
+Jones,Nick XPQ23466 32.15 38.1 70.25 C
+
+Billy,Joel biljoe 3.25 6.9 10.15 F
+
+Over,Achieve oach 50 50 100 A
+
+Please indicate your choice of operation (m for menu): g
+Enter the ID of the student
+biljoe
+Enter the new final test score
+100
+Please indicate your choice of operation (m for menu): e
+Printing student data to a file 
+Pondicherry,John XPQ23456 33.75 46.9 80.65 B
+
+Quincy,Jane XPL27856 38.65 38.1 76.75 C
+
+Jones,Nick XPQ23466 32.15 38.1 70.25 C
+
+Billy,Joel biljoe 3.25 23.9 27.15 F
+
+Over,Achieve oach 50 50 100 A
+
+Please indicate your choice of operation (m for menu): h
+Enter where you would like to save your data
+cg
+Saving data Thank-you, good bye! 
+]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ cat cg
+Pondicherry,John XPQ23456 33.75 46.9 80.65 B
+
+Quincy,Jane XPL27856 38.65 38.1 76.75 C
+
+Jones,Nick XPQ23466 32.15 38.1 70.25 C
+
+Billy,Joel biljoe 3.25 23.9 27.15 F
+
+Over,Achieve oach 50 50 100 A
+
+]0;it1032ao@csci4:~/FinalProjectP2/FinalProjectP2[it1032ao@csci4 FinalProjectP2]$ exit
+exit
+
+Script done on Wed 26 Apr 2023 05:02:05 PM CDT
